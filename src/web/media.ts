@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
-import path from "node:path";
+import * as fs from "node:fs/promises";
+import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { SsrFPolicy } from "../infra/net/ssrf.js";
 import { logVerbose, shouldLogVerbose } from "../globals.js";
