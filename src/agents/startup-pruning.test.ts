@@ -128,7 +128,7 @@ describe("applyStartupPruning", () => {
     expect(result).toBe(false);
   });
 
-  it("warns about keep-summarized strategy but falls back to keep-recent", async () => {
+  it("implements keep-summarized strategy with basic summary", async () => {
     const sm = SessionManager.inMemory();
 
     for (let i = 1; i <= 20; i++) {
@@ -136,7 +136,8 @@ describe("applyStartupPruning", () => {
       sm.appendMessage(makeAssistantMessage(i * 2, 10000));
     }
 
-    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const addSystemMessageSpy = vi.spyOn(sm, "addSystemMessage").mockImplementation(() => {});
     vi.spyOn(sm, "createBranchedSession").mockReturnValue("/tmp/test.jsonl");
     vi.spyOn(sm, "setSessionFile").mockImplementation(() => {});
 
@@ -152,11 +153,15 @@ describe("applyStartupPruning", () => {
     });
 
     expect(result).toBe(true);
-    expect(warnSpy).toHaveBeenCalledWith(
-      "[startup-pruning] keep-summarized not yet implemented, using keep-recent",
+    expect(logSpy).toHaveBeenCalledWith(
+      expect.stringContaining("[startup-pruning] Creating summary for"),
+    );
+    expect(addSystemMessageSpy).toHaveBeenCalledWith(
+      expect.stringContaining("## Session History Summary"),
     );
 
-    warnSpy.mockRestore();
+    logSpy.mockRestore();
+    addSystemMessageSpy.mockRestore();
   });
 
   it("returns false when createBranchedSession fails", async () => {
