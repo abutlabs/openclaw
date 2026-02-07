@@ -7,7 +7,7 @@ import {
 } from "@whiskeysockets/baileys";
 import { randomUUID } from "node:crypto";
 import fsSync from "node:fs";
-import qrcode from "qrcode-terminal";
+import * as qrcode from "qrcode-terminal";
 import { formatCliCommand } from "../cli/command-format.js";
 import { danger, success } from "../globals.js";
 import { getChildLogger, toPinoLikeLogger } from "../logging.js";
