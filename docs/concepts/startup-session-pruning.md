@@ -64,8 +64,8 @@ Add to `~/.openclaw/openclaw.json` under `agents.defaults.compaction`:
 ### strategy
 - **Type**: `"keep-recent" | "keep-summarized"`
 - **Default**: `"keep-recent"`
-- **Current**: Only `"keep-recent"` is implemented
-- **Future**: `"keep-summarized"` will use pi-coding-agent summarization
+- **keep-recent**: Keeps only the most recent messages within the token budget
+- **keep-summarized**: Creates a summary of dropped messages and includes it in the pruned session
 
 ### minRecentMessages
 - **Type**: `number`
@@ -163,6 +163,24 @@ For agents with `identityPersistence` enabled, startup pruning uses enhanced log
           "enabled": true,
           "targetTokens": 180000,
           "minRecentMessages": 20
+        }
+      }
+    }
+  }
+}
+```
+
+### Summarized pruning
+```json
+{
+  "agents": {
+    "defaults": {
+      "compaction": {
+        "startupPruning": {
+          "enabled": true,
+          "targetTokens": 120000,
+          "strategy": "keep-summarized",
+          "minRecentMessages": 15
         }
       }
     }

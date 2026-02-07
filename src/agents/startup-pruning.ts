@@ -109,9 +109,41 @@ export async function applyStartupPruning(params: {
     let newSessionPath: string | undefined;
 
     if (strategy === "keep-summarized") {
-      // TODO: Add summarization of dropped messages
-      // For now, fall back to keep-recent
-      console.warn("[startup-pruning] keep-summarized not yet implemented, using keep-recent");
+      // Get the messages that would be dropped for summarization
+      const droppedEntries = allEntries.slice(0, cutResult.firstKeptEntryIndex);
+      const droppedMessages = droppedEntries
+        .filter((entry): entry is { type: "message", data: AgentMessage } => entry.type === "message")
+        .map((entry) => entry.data);
+
+      if (droppedMessages.length > 0) {
+        console.log(`[startup-pruning] Creating summary for ${droppedMessages.length} dropped messages`);
+        
+        // For now, create a basic summary rather than using full AI summarization
+        // TODO: Implement full AI-powered summarization using generateSummary when model context is available
+        const userMessages = droppedMessages.filter(msg => msg.role === "user").length;
+        const assistantMessages = droppedMessages.filter(msg => msg.role === "assistant").length;
+        const systemMessages = droppedMessages.filter(msg => msg.role === "system").length;
+        
+        const basicSummary = `## Session History Summary
+
+This session had ${droppedMessages.length} earlier messages that were removed during startup pruning to manage context size:
+- ${userMessages} user messages
+- ${assistantMessages} assistant messages  
+- ${systemMessages} system messages
+
+The conversation history before this point has been condensed to preserve context window space.
+
+---
+
+*Note: Enhanced AI-powered summarization of dropped content is planned for a future update.*`;
+
+        // Add the summary as a system message before the kept content
+        sessionManager.addSystemMessage(basicSummary);
+
+        console.log(`[startup-pruning] Added summary of dropped context`);
+      } else {
+        console.log(`[startup-pruning] No messages to summarize, proceeding with pruning`);
+      }
     }
 
     // Branch to the parent of the first kept entry
