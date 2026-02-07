@@ -201,4 +201,4 @@ Look for these log messages to monitor startup pruning:
 [startup-pruning] Created branch: session-main-abc123.branch-20240207-143022.jsonl
 ```
 
-See also: [Session Pruning](/concepts/session-pruning), [Compaction](/concepts/compaction)
+See also: [Session Pruning](/concepts/session-pruning), [Compaction](/concepts/compaction), [Identity Persistence](/identity-persistence)
