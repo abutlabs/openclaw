@@ -402,6 +402,23 @@ if (cfg?.agents?.defaults?.contextPruning?.mode === "cache-ttl") {
 }
 ```
 
+### Startup Session Pruning
+
+OpenClaw includes startup session pruning to prevent bloated sessions from immediately hitting context limits on load. This creates new branched session files with only kept entries:
+
+```typescript
+if (config.startupPruning?.enabled) {
+  const wasPruned = await applyStartupPruning({
+    sessionManager,
+    config: config.startupPruning,
+    provider,
+    modelId,
+  });
+}
+```
+
+Configuration supports `keep-recent` and `keep-summarized` strategies. See [Startup Session Pruning](/concepts/startup-session-pruning) for details.
+
 ## Streaming & Block Replies
 
 ### Block Chunking
