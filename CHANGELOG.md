@@ -15,6 +15,9 @@ Docs: https://docs.openclaw.ai
 - Cron: delete one-shot jobs after success by default; add `--keep-after-run` for CLI.
 - Cron: suppress messaging tools during announce delivery so summaries post consistently.
 - Cron: avoid duplicate deliveries when isolated runs send messages directly.
+- Agents: add configurable startup session pruning to prevent bloated sessions from hitting context limits on load.
+- Agents: implement keep-summarized strategy for startup pruning with basic message summarization.
+- Agents: add identity-aware startup pruning with enhanced context preservation for agents with identity persistence.
 
 ### Fixes
 
