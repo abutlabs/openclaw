@@ -206,9 +206,9 @@ export class WizardSession {
     this.status = "cancelled";
     this.error = "cancelled";
     this.currentStep = null;
-    for (const deferred of this.answerDeferred.values()) {
+    Array.from(this.answerDeferred.values()).forEach(deferred => {
       deferred.reject(new WizardCancelledError());
-    }
+    });
     this.answerDeferred.clear();
     this.resolveStep(null);
   }
