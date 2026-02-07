@@ -1949,6 +1949,43 @@ Example (tuned):
 }
 ```
 
+#### `agents.defaults.compaction.startupPruning` (startup session pruning)
+
+`agents.defaults.compaction.startupPruning` automatically reduces session size **on load** to prevent bloated sessions from immediately hitting context limits. Unlike runtime pruning, this creates new branched session files with only the kept entries.
+
+Configuration options:
+
+- `enabled` (boolean, default: false): Enable startup pruning
+- `targetTokens` (number, default: 80% of context window): Maximum tokens to load
+- `strategy` ("keep-recent" | "keep-summarized", default: "keep-recent"): Pruning strategy
+- `minRecentMessages` (number, default: 10): Minimum messages to preserve
+
+Strategies:
+
+- **keep-recent**: Keeps only the most recent messages within the token budget
+- **keep-summarized**: Creates a summary of dropped messages and includes it in the pruned session
+
+Example:
+
+```json5
+{
+  agents: {
+    defaults: {
+      compaction: {
+        startupPruning: {
+          enabled: true,
+          targetTokens: 160000,
+          strategy: "keep-summarized",
+          minRecentMessages: 15,
+        },
+      },
+    },
+  },
+}
+```
+
+See [/concepts/startup-session-pruning](/concepts/startup-session-pruning) for behavior details.
+
 Block streaming:
 
 - `agents.defaults.blockStreamingDefault`: `"on"`/`"off"` (default off).
