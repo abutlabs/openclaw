@@ -52,7 +52,7 @@ Context window is model-specific. OpenClaw uses the model definition from the co
 - **Compaction**: summarises and **persists** in JSONL.
 - **Session pruning**: trims old **tool results** only, **in-memory**, per request.
 
-See [/concepts/session-pruning](/concepts/session-pruning) for pruning details.
+See [/concepts/session-pruning](/concepts/session-pruning) for runtime pruning and [/concepts/startup-session-pruning](/concepts/startup-session-pruning) for startup pruning details.
 
 ## Tips
 

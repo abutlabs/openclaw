@@ -56,8 +56,10 @@ All session state is **owned by the gateway** (the “master” OpenClaw). UI cl
 
 ## Session pruning
 
-OpenClaw trims **old tool results** from the in-memory context right before LLM calls by default.
-This does **not** rewrite JSONL history. See [/concepts/session-pruning](/concepts/session-pruning).
+OpenClaw provides two types of session pruning:
+
+- **Runtime pruning**: Trims old tool results from in-memory context before LLM calls. Does **not** rewrite JSONL history. See [/concepts/session-pruning](/concepts/session-pruning).
+- **Startup pruning**: Reduces session size on load to prevent bloated sessions from hitting context limits immediately. Creates new branched session files. See [/concepts/startup-session-pruning](/concepts/startup-session-pruning).
 
 ## Pre-compaction memory flush
 
