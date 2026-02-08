@@ -16,7 +16,7 @@ This PR adds configurable startup session pruning to prevent bloated sessions fr
 3. ✅ **Pruning Logic** (`src/agents/startup-pruning.ts`)
    - Uses pi-coding-agent's `findCutPoint()` to determine where to prune
    - Creates branched session with only kept entries
-   - Supports two strategies: `keep-recent` and `keep-summarized` (latter TODO)
+   - Supports two strategies: `keep-recent` and `keep-summarized` (both implemented)
 
 ## Configuration
 
@@ -109,7 +109,6 @@ if (pruningConfig?.enabled) {
 
 ## Future Enhancements
 
-- [ ] Implement `keep-summarized` strategy using pi-coding-agent's summarization
 - [ ] Add config option for archiving pruned sessions
 - [ ] Add periodic pruning (not just on startup)
 - [ ] Add metrics/logging for pruning activity
