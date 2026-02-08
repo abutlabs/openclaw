@@ -54,8 +54,7 @@ export class IdentityPersistence {
   extractSessionPatterns(messages: AgentMessage[]): IdentityChunk[] {
     const patterns: IdentityChunk[] = [];
     
-    // Identify core interaction patterns
-    const userMessages = messages.filter(m => m.role === 'user');
+    // Identify core interaction patterns  
     const assistantMessages = messages.filter(m => m.role === 'assistant');
     
     // Extract communication style patterns
@@ -139,8 +138,6 @@ export class IdentityPersistence {
    * Preserve identity-critical chunks during session pruning
    */
   preserveIdentityCriticalChunks(messages: AgentMessage[]): AgentMessage[] {
-    const preservedMessages: AgentMessage[] = [];
-    
     // Always preserve name/identity assertions
     const identityMessages = messages.filter(m => 
       this.containsIdentityContent(m.content)
@@ -244,7 +241,9 @@ export class IdentityPersistence {
 
   private extractListItems(content: string, section: string): string[] {
     const sectionIndex = content.indexOf(section);
-    if (sectionIndex === -1) return [];
+    if (sectionIndex === -1) {
+      return [];
+    }
     
     const afterSection = content.substring(sectionIndex + section.length);
     const nextSection = afterSection.indexOf('\n## ');
