@@ -63,7 +63,7 @@ class MockSessionManager {
 // Mock token estimation (simplified)
 vi.mock("@mariozechner/pi-coding-agent", () => ({
   estimateTokens: (text: string) => Math.ceil(text.length / 4), // Rough estimate: 4 chars per token
-  findCutPoint: (entries: any[], start: number, end: number, targetTokens: number) => {
+  findCutPoint: (entries: SessionEntry[], start: number, end: number, targetTokens: number) => {
     let totalTokens = 0;
     let cutIndex = end;
     
