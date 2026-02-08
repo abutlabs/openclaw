@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import os from "node:os";
 
-const pnpm = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
+const packageManager = process.platform === "win32" ? "npx.cmd" : "npx";
 
 const runs = [
   {
@@ -61,7 +61,7 @@ const runOnce = (entry, extraArgs = []) =>
       (acc, flag) => (acc.includes(flag) ? acc : `${acc} ${flag}`.trim()),
       nodeOptions,
     );
-    const child = spawn(pnpm, args, {
+    const child = spawn(packageManager, args, {
       stdio: "inherit",
       env: { ...process.env, VITEST_GROUP: entry.name, NODE_OPTIONS: nextNodeOptions },
       shell: process.platform === "win32",
