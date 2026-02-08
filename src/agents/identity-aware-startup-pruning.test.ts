@@ -4,6 +4,16 @@ import { join } from "node:path";
 import { applyIdentityAwareStartupPruning, type IdentityAwarePruningConfig } from "./identity-aware-startup-pruning.js";
 
 /**
+ * Session entry interface for typing SessionManager entries
+ */
+interface SessionEntry {
+  role: string;
+  content: string;
+  id: string;
+  [key: string]: unknown; // Allow additional properties
+}
+
+/**
  * Test suite for Identity-Aware Startup Pruning
  * 
  * Tests the integration of hierarchical consciousness architecture
@@ -12,10 +22,10 @@ import { applyIdentityAwareStartupPruning, type IdentityAwarePruningConfig } fro
 
 // Mock SessionManager for testing
 class MockSessionManager {
-  private entries: any[] = [];
+  private entries: SessionEntry[] = [];
   private branchedTo: string | null = null;
 
-  constructor(entries: any[] = []) {
+  constructor(entries: SessionEntry[] = []) {
     this.entries = entries;
   }
 

@@ -6,6 +6,16 @@ import { DEFAULT_CONTEXT_TOKENS } from "./defaults.js";
 import { IdentityPersistence } from "./identity-persistence.js";
 
 /**
+ * Session entry interface for typing SessionManager entries
+ */
+interface SessionEntry {
+  role: string;
+  content: string;
+  id: string;
+  [key: string]: unknown; // Allow additional properties
+}
+
+/**
  * Enhanced startup pruning that preserves identity-critical content
  * while respecting token limits.
  * 
@@ -259,7 +269,7 @@ function estimateMessagesTokens(messages: AgentMessage[]): number {
 /**
  * Estimate token count for session entries
  */
-function estimateEntriesTokens(entries: any[]): number {
+function estimateEntriesTokens(entries: SessionEntry[]): number {
   return entries.reduce((total, entry) => {
     return total + estimateTokens(entry.content || '');
   }, 0);
