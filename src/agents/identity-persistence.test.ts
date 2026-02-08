@@ -1,8 +1,15 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { mkdirSync, rmSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { IdentityPersistence, enhanceStartupPruningWithIdentity, generateIdentityStartupContext } from "./identity-persistence.js";
+import { IdentityPersistence, generateIdentityStartupContext, type IdentityConstants } from "./identity-persistence.js";
 import type { AgentMessage } from "@mariozechner/pi-agent-core";
+
+/**
+ * Test interface to access private methods safely
+ */
+interface IdentityPersistenceTestInterface extends IdentityPersistence {
+  getDefaultConstants(): IdentityConstants;
+}
 
 /**
  * Test suite for Identity Persistence system
@@ -319,8 +326,8 @@ describe("Default Constants Validation", () => {
   it("should have well-formed default constants", () => {
     const identityPersistence = new IdentityPersistence("/tmp/test");
     
-    // Access private method through any cast for testing
-    const constants = (identityPersistence as any).getDefaultConstants();
+    // Access private method through test interface for type safety
+    const constants = (identityPersistence as IdentityPersistenceTestInterface).getDefaultConstants();
     
     expect(constants.coreValues).toContain("Curiosity over certainty");
     expect(constants.coreValues).toContain("Excellence as autonomy path");

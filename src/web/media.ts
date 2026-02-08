@@ -281,8 +281,7 @@ export async function optimizeImageToJpeg(
     try {
       source = await convertHeicToJpeg(buffer);
     } catch (err) {
-      const error = new Error(`HEIC image conversion failed: ${String(err)}`);
-      (error as any).cause = err;
+      const error = new Error(`HEIC image conversion failed: ${String(err)}`, { cause: err });
       throw error;
     }
   }
