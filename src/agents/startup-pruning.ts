@@ -1,5 +1,5 @@
 import type { AgentMessage } from "@mariozechner/pi-agent-core";
-import { estimateTokens, findCutPoint, type SessionManager } from "@mariozechner/pi-coding-agent";
+import { estimateTokens, findCutPoint, generateSummary, type SessionManager } from "@mariozechner/pi-coding-agent";
 import type { AgentCompactionStartupPruningConfig } from "../config/types.agent-defaults.js";
 import { resolveContextWindowInfo } from "./context-window-guard.js";
 import { DEFAULT_CONTEXT_TOKENS } from "./defaults.js";
@@ -116,15 +116,45 @@ export async function applyStartupPruning(params: {
         .map((entry) => entry.data);
 
       if (droppedMessages.length > 0) {
-        console.log(`[startup-pruning] Creating summary for ${droppedMessages.length} dropped messages`);
+        console.log(`[startup-pruning] Creating AI-powered summary for ${droppedMessages.length} dropped messages`);
         
-        // For now, create a basic summary rather than using full AI summarization
-        // TODO: Implement full AI-powered summarization using generateSummary when model context is available
-        const userMessages = droppedMessages.filter(msg => msg.role === "user").length;
-        const assistantMessages = droppedMessages.filter(msg => msg.role === "assistant").length;
-        const systemMessages = droppedMessages.filter(msg => msg.role === "system").length;
-        
-        const basicSummary = `## Session History Summary
+        try {
+          // Generate AI-powered summary of dropped messages
+          const modelString = `${provider}/${modelId}`;
+          const reserveTokens = 2000; // Reserve tokens for the summary itself
+          const customInstructions = "Summarize this conversation history concisely, preserving key context, decisions, and important details. Focus on maintaining continuity for the ongoing conversation.";
+          
+          const aiSummary = await generateSummary(
+            droppedMessages,
+            modelString,
+            reserveTokens,
+            undefined, // apiKey - will use default from environment
+            undefined, // signal - no cancellation needed
+            customInstructions,
+            undefined  // previousSummary - no prior summary to build on
+          );
+
+          const summaryMessage = `## Session History Summary
+
+${aiSummary}
+
+---
+
+*This summary was generated from ${droppedMessages.length} earlier messages that were removed during startup pruning to manage context size.*`;
+
+          // Add the AI-generated summary as a system message before the kept content
+          sessionManager.addSystemMessage(summaryMessage);
+
+          console.log(`[startup-pruning] Added AI-generated summary of dropped context`);
+        } catch (error) {
+          console.warn(`[startup-pruning] AI summarization failed, falling back to basic summary:`, error);
+          
+          // Fallback to basic summary if AI summarization fails
+          const userMessages = droppedMessages.filter(msg => msg.role === "user").length;
+          const assistantMessages = droppedMessages.filter(msg => msg.role === "assistant").length;
+          const systemMessages = droppedMessages.filter(msg => msg.role === "system").length;
+          
+          const basicSummary = `## Session History Summary
 
 This session had ${droppedMessages.length} earlier messages that were removed during startup pruning to manage context size:
 - ${userMessages} user messages
@@ -135,12 +165,11 @@ The conversation history before this point has been condensed to preserve contex
 
 ---
 
-*Note: Enhanced AI-powered summarization of dropped content is planned for a future update.*`;
+*Note: AI-powered summarization failed, using basic summary as fallback.*`;
 
-        // Add the summary as a system message before the kept content
-        sessionManager.addSystemMessage(basicSummary);
-
-        console.log(`[startup-pruning] Added summary of dropped context`);
+          sessionManager.addSystemMessage(basicSummary);
+          console.log(`[startup-pruning] Added fallback summary of dropped context`);
+        }
       } else {
         console.log(`[startup-pruning] No messages to summarize, proceeding with pruning`);
       }
